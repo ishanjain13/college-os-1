@@ -1,9 +1,9 @@
 // Initial rich default state for College OS
 export const INITIAL_USER_PROFILE = {
-  name: "Alex",
-  college: "Stanford University / MIT",
+  name: "ishan",
+  college: "jecrc university",
   course: "Computer Science & Artificial Intelligence",
-  year: "Sophomore (Year 2)",
+  year: "first year",
   avatar: "⚡",
   streak: 12,
   longestStreak: 21,
@@ -268,16 +268,16 @@ export const INITIAL_TIMETABLE = [
   { id: 'c-1', subject: "CS 229: Machine Learning", teacher: "Prof. Andrew", room: "Turing Hall 101", day: "Monday", startTime: "09:00", endTime: "10:30", color: "#6366f1" },
   { id: 'c-2', subject: "CS 161: Design & Analysis of Algorithms", teacher: "Dr. Tarjan", room: "Gates B03", day: "Monday", startTime: "11:00", endTime: "12:30", color: "#ec4899" },
   { id: 'c-3', subject: "EE 108: Digital Systems Architecture", teacher: "Prof. Horowitz", room: "Packard 204", day: "Monday", startTime: "14:00", endTime: "15:30", color: "#06b6d4" },
-  
+
   { id: 'c-4', subject: "MATH 104: Linear Algebra & Matrix Analysis", teacher: "Prof. Strang", room: "Math 380", day: "Tuesday", startTime: "10:00", endTime: "11:30", color: "#10b981" },
   { id: 'c-5', subject: "CS 229: ML Discussion Lab", teacher: "TA Marcus", room: "Huang Lab 4", day: "Tuesday", startTime: "13:00", endTime: "14:30", color: "#6366f1" },
-  
+
   { id: 'c-6', subject: "CS 229: Machine Learning", teacher: "Prof. Andrew", room: "Turing Hall 101", day: "Wednesday", startTime: "09:00", endTime: "10:30", color: "#6366f1" },
   { id: 'c-7', subject: "CS 161: Design & Analysis of Algorithms", teacher: "Dr. Tarjan", room: "Gates B03", day: "Wednesday", startTime: "11:00", endTime: "12:30", color: "#ec4899" },
-  
+
   { id: 'c-8', subject: "MATH 104: Linear Algebra & Matrix Analysis", teacher: "Prof. Strang", room: "Math 380", day: "Thursday", startTime: "10:00", endTime: "11:30", color: "#10b981" },
   { id: 'c-9', subject: "EE 108: Digital Systems Architecture", teacher: "Prof. Horowitz", room: "Packard 204", day: "Thursday", startTime: "14:00", endTime: "15:30", color: "#06b6d4" },
-  
+
   { id: 'c-10', subject: "CS 161: Algorithm Problem Workshop", teacher: "TA Elena", room: "Gates B12", day: "Friday", startTime: "10:00", endTime: "12:00", color: "#ec4899" }
 ];
 

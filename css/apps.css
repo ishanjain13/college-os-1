@@ -1,0 +1,413 @@
+/* COLLEGE OS - Specific App Styles & Layouts */
+
+/* Common App Layout */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: var(--space-5);
+  gap: var(--space-4);
+  color: var(--os-text);
+}
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--os-border);
+  padding-bottom: var(--space-3);
+}
+
+.app-title-group h2 {
+  font-size: 1.25rem;
+  line-height: 1.2;
+}
+
+.app-title-group p {
+  font-size: 0.75rem;
+  color: var(--os-text-muted);
+  margin-top: 2px;
+}
+
+.app-body {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* ==========================================================================
+   ACADEMICS APP
+   ========================================================================== */
+.timetable-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(180px, 1fr));
+  gap: var(--space-3);
+  overflow-x: auto;
+  padding-bottom: var(--space-2);
+}
+
+.timetable-day-col {
+  background: var(--os-bg-subtle);
+  border: 1px solid var(--os-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.timetable-class-card {
+  background: var(--os-bg-card);
+  border-left: 3px solid var(--os-accent);
+  border-radius: var(--radius-sm);
+  padding: var(--space-2) var(--space-2-5);
+  font-size: 0.75rem;
+}
+
+.attendance-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3);
+  background: var(--os-bg-card);
+  border: 1px solid var(--os-border);
+  border-radius: var(--radius-md);
+}
+
+/* ==========================================================================
+   HABITS APP
+   ========================================================================== */
+.habit-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-4);
+  background: var(--os-bg-card);
+  border: 1px solid var(--os-border);
+  border-radius: var(--radius-lg);
+  transition: all var(--duration-fast);
+}
+
+.habit-row:hover {
+  border-color: var(--os-border-light);
+  background: var(--os-bg-card-hover);
+}
+
+.habit-check-btn {
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-full);
+  border: 2px solid var(--os-border-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--duration-fast);
+}
+
+.habit-check-btn.checked {
+  background: var(--os-success);
+  border-color: var(--os-success);
+  color: #ffffff;
+}
+
+/* ==========================================================================
+   FOCUS / POMODORO APP
+   ========================================================================== */
+.focus-timer-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-8) 0;
+}
+
+.timer-circle {
+  width: 240px;
+  height: 240px;
+  border-radius: 50%;
+  border: 4px solid var(--os-accent-subtle);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  box-shadow: 0 0 32px var(--os-accent-glow);
+}
+
+.timer-time-text {
+  font-family: var(--font-mono);
+  font-size: 3.5rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.sound-presets-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: var(--space-2);
+}
+
+.sound-btn {
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--os-border);
+  border-radius: var(--radius-md);
+  background: var(--os-bg-subtle);
+  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  cursor: pointer;
+  transition: all var(--duration-fast);
+}
+
+.sound-btn.active {
+  background: var(--os-accent);
+  color: #ffffff;
+  border-color: var(--os-accent);
+}
+
+/* ==========================================================================
+   PLANNER / KANBAN APP
+   ========================================================================== */
+.kanban-board {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--space-4);
+  flex: 1;
+}
+
+.kanban-col {
+  background: var(--os-bg-subtle);
+  border: 1px solid var(--os-border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.kanban-col-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.8125rem;
+}
+
+.kanban-card-item {
+  background: var(--os-bg-card);
+  border: 1px solid var(--os-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  box-shadow: var(--shadow-1);
+  cursor: grab;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.kanban-card-item:active {
+  cursor: grabbing;
+}
+
+/* ==========================================================================
+   NOTES & FLASHCARDS APP
+   ========================================================================== */
+.notes-layout {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: var(--space-4);
+  height: 100%;
+}
+
+@media (max-width: 640px) {
+  .notes-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.notes-sidebar {
+  border-right: 1px solid var(--os-border);
+  padding-right: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.note-editor-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  height: 100%;
+}
+
+.note-content-area {
+  flex: 1;
+  background: var(--os-bg-input);
+  border: 1px solid var(--os-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  line-height: 1.6;
+  resize: none;
+  color: var(--os-text);
+}
+
+/* Flashcard Flip Quiz */
+.flashcard {
+  perspective: 1000px;
+  height: 220px;
+  cursor: pointer;
+}
+
+.flashcard-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  transition: transform 0.6s var(--ease-spring);
+  transform-style: preserve-3d;
+}
+
+.flashcard.flipped .flashcard-inner {
+  transform: rotateY(180deg);
+}
+
+.flashcard-front, .flashcard-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--os-border-light);
+  background: var(--os-bg-card);
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-3);
+}
+
+.flashcard-back {
+  transform: rotateY(180deg);
+  background: var(--os-bg-card-hover);
+}
+
+/* ==========================================================================
+   BOSS BATTLE & GAMIFICATION
+   ========================================================================== */
+.boss-card {
+  background: linear-gradient(135deg, rgba(88, 28, 135, 0.4) 0%, rgba(15, 23, 42, 0.9) 100%);
+  border: 2px solid rgba(168, 85, 247, 0.4);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-3);
+}
+
+.boss-hp-bar {
+  width: 100%;
+  height: 16px;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  margin: var(--space-3) 0;
+}
+
+.boss-hp-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #ef4444, #f59e0b);
+  border-radius: var(--radius-full);
+  transition: width 0.5s ease-out;
+}
+
+/* ==========================================================================
+   AI STUDY BUDDY
+   ========================================================================== */
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: var(--space-3);
+}
+
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding-right: var(--space-2);
+}
+
+.chat-bubble {
+  max-width: 82%;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-lg);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}
+
+.chat-bubble.user {
+  align-self: flex-end;
+  background: var(--os-accent);
+  color: #ffffff;
+  border-bottom-right-radius: 4px;
+}
+
+.chat-bubble.assistant {
+  align-self: flex-start;
+  background: var(--os-bg-card);
+  border: 1px solid var(--os-border);
+  border-bottom-left-radius: 4px;
+}
+
+/* ==========================================================================
+   SETTINGS THEME PILLS
+   ========================================================================== */
+.theme-picker-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: var(--space-3);
+}
+
+.theme-pill-card {
+  padding: var(--space-3);
+  border-radius: var(--radius-lg);
+  border: 2px solid var(--os-border);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  align-items: center;
+  transition: all var(--duration-fast);
+}
+
+.theme-pill-card:hover {
+  border-color: var(--os-border-light);
+}
+
+.theme-pill-card.selected {
+  border-color: var(--os-accent);
+  background: var(--os-accent-subtle);
+}
+
+.swatch-group {
+  display: flex;
+  gap: 4px;
+}
+
+.swatch {
+  width: 14px;
+  height: 14px;
+  border-radius: var(--radius-full);
+}
