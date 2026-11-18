@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark" data-accent="indigo">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>COLLEGE OS — Build the person you want to become</title>
+  <meta name="description" content="COLLEGE OS - Personal Operating System for ambitious college students. Standalone vanilla web app.">
+  <meta name="theme-color" content="#090d16">
+
+  <!-- Google Fonts: Plus Jakarta Sans, Inter, JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Design System CSS -->
+  <link rel="stylesheet" href="./css/tokens.css">
+  <link rel="stylesheet" href="./css/base.css">
+  <link rel="stylesheet" href="./css/layout.css">
+  <link rel="stylesheet" href="./css/components.css">
+  <link rel="stylesheet" href="./css/apps.css">
+  <link rel="stylesheet" href="./css/animations.css">
+</head>
+<body>
+  <!-- System Boot Screen -->
+  <div id="boot-screen">
+    <div class="boot-terminal">
+      <div style="font-size: 1.25rem; font-weight: 800; color: #ffffff; margin-bottom: var(--space-4); font-family: var(--font-display);">
+        COLLEGE OS KERNEL v2.5
+      </div>
+      <div id="boot-terminal-logs"></div>
+      <div style="margin-top: var(--space-4);">
+        <span class="boot-cursor"></span>
+      </div>
+      <div style="margin-top: var(--space-6); font-size: 0.6875rem; color: #64748b;">
+        Press Space or Esc to skip initialization...
+      </div>
+    </div>
+  </div>
+
+  <div id="os-root">
+    <!-- Wallpaper Canvas & Ambient Vignette -->
+    <canvas id="wallpaper-canvas"></canvas>
+    <div class="wallpaper-overlay"></div>
+
+    <!-- System Top Bar -->
+    <header id="os-topbar" role="banner">
+      <div class="topbar-left">
+        <div class="topbar-brand">
+          <div class="topbar-logo-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+          </div>
+          <span>COLLEGE OS</span>
+        </div>
+
+        <button class="topbar-search-btn" id="topbar-search-btn" aria-label="Open Command Palette (Ctrl+K)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <span>Search or Command...</span>
+          <kbd class="topbar-kbd">Ctrl+K</kbd>
+        </button>
+      </div>
+
+      <div class="topbar-right">
+        <button class="btn btn-ghost btn-icon" id="topbar-quick-btn" title="Instant Quick Capture (+)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+        </button>
+
+        <button class="btn btn-ghost btn-icon" id="topbar-sound-btn" title="Toggle Sound FX">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+        </button>
+
+        <button class="btn btn-ghost btn-icon" id="topbar-theme-btn" title="Toggle Light/Dark Theme">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+        </button>
+
+        <div style="height: 16px; width: 1px; background: var(--os-border); margin: 0 4px;"></div>
+
+        <div style="text-align: right; font-family: var(--font-mono); font-size: 0.75rem;">
+          <div id="topbar-clock" style="font-weight: 700; color: var(--os-text);">12:00 PM</div>
+          <div id="topbar-date" style="font-size: 0.625rem; color: var(--os-text-muted);">Mon, Nov 18</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Desktop Workspace Area -->
+    <main id="os-desktop" role="main">
+      <div class="desktop-content">
+        <!-- Hero Banner with Quick Capture -->
+        <div class="hero-banner">
+          <div class="hero-text">
+            <div style="font-family: var(--font-mono); font-size: 0.6875rem; color: var(--os-accent); font-weight: 700; text-transform: uppercase;">
+              Stanford University / MIT • Computer Science &amp; AI
+            </div>
+            <h1>Good Day, Scholar</h1>
+            <p class="hero-subtitle">
+              "Build the person you want to become." Compounding standards across 18 integrated domains.
+            </p>
+          </div>
+
+          <div class="hero-quick-capture">
+            <form class="quick-capture-form" id="hero-quick-form">
+              <input type="text" class="quick-capture-input" id="hero-quick-input" placeholder="Quick capture a task (Press Enter ↵)..." />
+              <button type="submit" class="quick-capture-btn">Add Task</button>
+            </form>
+            <div style="display: flex; justify-content: space-between; font-size: 0.6875rem; color: var(--os-text-subtle); margin-top: 6px; padding: 0 4px; font-family: var(--font-mono);">
+              <span>Press <kbd class="topbar-kbd">Ctrl+K</kbd> for Command Palette</span>
+              <span>18 Apps Ready</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Desktop Widgets Grid -->
+        <div class="widgets-grid" id="os-desktop-widgets">
+          <!-- Populated by main.js -->
+        </div>
+      </div>
+    </main>
+
+    <!-- OS Window Stacking Layer -->
+    <div id="window-container"></div>
+
+    <!-- Window Edge Snap Preview Overlay -->
+    <div id="snap-preview"></div>
+
+    <!-- Desktop OS Dock -->
+    <div id="os-dock-container">
+      <nav id="os-dock" aria-label="Desktop Applications Dock">
+        <!-- Populated by main.js -->
+      </nav>
+    </div>
+
+    <!-- Mobile Navigation Tab Bar (< 768px) -->
+    <nav id="mobile-nav" aria-label="Mobile Navigation">
+      <button class="mobile-tab-btn active" data-app="dashboard">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+        <span>Home</span>
+      </button>
+      <button class="mobile-tab-btn" data-app="goals">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+        <span>Goals</span>
+      </button>
+      <button class="mobile-tab-btn" data-app="habits">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        <span>Habits</span>
+      </button>
+      <button class="mobile-tab-btn" data-app="academics">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+        <span>Classes</span>
+      </button>
+      <button class="mobile-tab-btn" data-app="focus">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="10" x2="14" y1="2" y2="2"/><line x1="12" x2="15" y1="14" y2="11"/><circle cx="12" cy="14" r="8"/></svg>
+        <span>Focus</span>
+      </button>
+      <button class="mobile-tab-btn" id="mobile-all-apps-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
+        <span>All Apps</span>
+      </button>
+    </nav>
+
+    <!-- Mobile Fullscreen All Apps Drawer -->
+    <div id="mobile-apps-drawer" class="modal-backdrop">
+      <div class="modal-card" style="max-height: 85vh;">
+        <div class="modal-header">
+          <div>
+            <h3 class="modal-title">All 18 Applications</h3>
+            <p style="font-size: 0.6875rem; color: var(--os-text-muted);">Tap to launch in full screen</p>
+          </div>
+          <button class="btn btn-ghost btn-xs" id="close-mobile-drawer">✕</button>
+        </div>
+        <div id="mobile-drawer-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-3);"></div>
+      </div>
+    </div>
+
+    <!-- Command Palette Dialog -->
+    <div id="command-palette-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-label="Command Palette">
+      <div class="modal-card palette-card">
+        <div class="palette-search-wrapper">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--os-text-muted);"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <input type="text" id="palette-search-input" class="palette-input" placeholder="Search 18 apps, tasks, notes, or quick actions..." autofocus />
+          <kbd class="topbar-kbd">Esc</kbd>
+        </div>
+        <div class="palette-results" id="palette-results-list"></div>
+      </div>
+    </div>
+
+    <!-- Instant Quick Capture Modal -->
+    <div id="quick-capture-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-label="Quick Capture">
+      <div class="modal-card" style="max-width: 480px;">
+        <div class="modal-header">
+          <div>
+            <h3 class="modal-title">Instant Quick Capture</h3>
+            <p style="font-size: 0.6875rem; color: var(--os-text-muted);">Create task, habit protocol, or rapid markdown note.</p>
+          </div>
+          <button class="btn btn-ghost btn-xs" id="close-quick-capture">✕</button>
+        </div>
+        <div class="tab-list" style="margin-bottom: var(--space-3);">
+          <button class="tab-btn active" data-qc-type="task">Kanban Task</button>
+          <button class="tab-btn" data-qc-type="habit">Habit</button>
+          <button class="tab-btn" data-qc-type="note">Note</button>
+        </div>
+        <form id="quick-capture-form">
+          <div class="form-group">
+            <label class="form-label">Description / Title</label>
+            <input type="text" id="qc-title-input" class="form-input" placeholder="Enter description..." required autofocus />
+          </div>
+          <div style="display: flex; justify-content: flex-end; gap: var(--space-2); margin-top: var(--space-4);">
+            <button type="submit" class="btn btn-primary btn-sm">Capture Item</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Achievement Toast Container -->
+    <div id="toast-container" aria-live="polite"></div>
+  </div>
+
+  <!-- Main ES6 Entry Point -->
+  <script type="module" src="./js/main.js"></script>
+</body>
+</html>
