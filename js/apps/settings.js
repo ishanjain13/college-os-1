@@ -113,11 +113,20 @@ export const settingsApp = {
               </div>
               <div class="form-group">
                 <label class="form-label">Degree Course</label>
-                <input type="text" id="prof-course" class="form-input" value="${escapeHtml(state.profile.course)}" />
+                <input type="text" id="prof-course" class="form-input" value="${escapeHtml(state.profile.course || '')}" />
               </div>
-              <button class="btn btn-primary btn-sm" id="btn-save-profile" style="margin-top: var(--space-3);">
-                Save Changes
-              </button>
+              <div class="form-group">
+                <label class="form-label">Academic Year</label>
+                <input type="text" id="prof-year" class="form-input" value="${escapeHtml(state.profile.year || 'Sophomore (Year 2)')}" />
+              </div>
+              <div style="display: flex; gap: var(--space-2); margin-top: var(--space-4);">
+                <button class="btn btn-primary btn-sm" id="btn-save-profile">
+                  Save Changes
+                </button>
+                <button class="btn btn-secondary btn-sm" id="btn-relaunch-onboarding">
+                  Run Setup Wizard ↻
+                </button>
+              </div>
             </div>
           ` : currentTab === 'sound' ? `
             <div class="card" style="max-width: 540px;">
@@ -211,9 +220,17 @@ export const settingsApp = {
       const name = container.querySelector('#prof-name')?.value;
       const college = container.querySelector('#prof-college')?.value;
       const course = container.querySelector('#prof-course')?.value;
-      store.updateProfile({ name, college, course });
+      const year = container.querySelector('#prof-year')?.value;
+      store.updateProfile({ name, college, course, year });
       soundService.playComplete();
       alert("Profile updated successfully!");
+    });
+
+    const relaunchBtn = container.querySelector('#btn-relaunch-onboarding');
+    relaunchBtn?.addEventListener('click', () => {
+      if (window.openOnboardingModal) {
+        window.openOnboardingModal();
+      }
     });
 
     // Toggle sound

@@ -21,6 +21,21 @@ class WindowManager {
     window.addEventListener('resize', () => {
       this.handleGlobalResize();
     });
+
+    // Keyboard shortcut: Escape minimizes the active window if no modal is open
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && this.activeWindowId) {
+        const modalOpen = document.querySelector('.modal-backdrop.open');
+        const paletteOpen = document.getElementById('command-palette-modal')?.classList.contains('open');
+        const contextOpen = document.getElementById('desktop-context-menu')?.classList.contains('open');
+        if (!modalOpen && !paletteOpen && !contextOpen) {
+          const isInput = document.activeElement && ['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName);
+          if (!isInput) {
+            this.minimizeWindow(this.activeWindowId);
+          }
+        }
+      }
+    });
   }
 
   registerApp(app) {
@@ -61,14 +76,18 @@ class WindowManager {
       y: defaultY,
       w: defaultW,
       h: defaultH,
-      isMaximized: false,
+      isMaximized: isMobile,
       isMinimized: false,
       zIndex: ++this.topZ
     };
 
     const winEl = document.createElement('div');
-    winEl.className = 'os-window';
+    winEl.className = `os-window ${isMobile ? 'maximized' : ''}`;
     winEl.id = `window-${appId}`;
+    winEl.setAttribute('role', 'dialog');
+    winEl.setAttribute('aria-label', meta.title);
+    winEl.setAttribute('aria-modal', 'false');
+    winEl.setAttribute('tabindex', '-1');
     winEl.style.zIndex = winData.zIndex;
     winEl.style.left = `${winData.x}px`;
     winEl.style.top = `${winData.y}px`;
@@ -79,15 +98,17 @@ class WindowManager {
     winEl.innerHTML = `
       <div class="window-titlebar" id="titlebar-${appId}">
         <div class="window-controls">
-          <button class="win-btn win-btn-close" title="Close" data-action="close">${getIcon('x')}</button>
-          <button class="win-btn win-btn-min" title="Minimize" data-action="minimize">${getIcon('minus')}</button>
-          <button class="win-btn win-btn-max" title="Maximize" data-action="maximize">${getIcon('square')}</button>
+          <button class="win-btn win-btn-close" title="Close" aria-label="Close" data-action="close">${getIcon('x')}</button>
+          <button class="win-btn win-btn-min" title="Minimize" aria-label="Minimize" data-action="minimize">${getIcon('minus')}</button>
+          <button class="win-btn win-btn-max" title="Maximize" aria-label="Maximize" data-action="maximize">${getIcon('square')}</button>
         </div>
         <div class="window-title-content">
           <div class="window-app-icon">${getIcon(meta.icon, 'w-4 h-4')}</div>
           <span>${meta.title}</span>
         </div>
-        <div class="window-actions"></div>
+        <div class="window-actions">
+          <button class="btn btn-ghost btn-xs mobile-win-close-btn" data-action="close" aria-label="Close Window" style="display: none;">✕</button>
+        </div>
       </div>
       <div class="window-body" id="winbody-${appId}">
         <!-- App content will be injected here -->
@@ -380,6 +401,15 @@ class WindowManager {
         item.classList.add('has-window');
       } else {
         item.classList.remove('has-window');
+      }
+    });
+
+    document.querySelectorAll('.mobile-tab-btn[data-app]').forEach((btn) => {
+      const appId = btn.getAttribute('data-app');
+      if (this.activeWindowId === appId) {
+        btn.classList.add('active');
+      } else if (this.activeWindowId) {
+        btn.classList.remove('active');
       }
     });
   }
