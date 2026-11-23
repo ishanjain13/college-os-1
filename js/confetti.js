@@ -1,6 +1,11 @@
 // COLLEGE OS - Pure Canvas Confetti Engine (Zero external libraries)
 
 export function triggerConfetti(particleCount = 80) {
+  // Respect prefers-reduced-motion accessibility preference
+  if (typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    return;
+  }
+
   let canvas = document.getElementById('confetti-canvas');
   if (!canvas) {
     canvas = document.createElement('canvas');

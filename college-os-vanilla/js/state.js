@@ -1,6 +1,7 @@
-// COLLEGE OS - Central Reactive State Store & Persistence
+// COLLEGE OS - Central Reactive State Store & Persistence (Schema v2)
 
 export const STORAGE_KEY = 'COLLEGE_OS_STATE_V1';
+export const CURRENT_SCHEMA_VERSION = 2;
 
 export const APP_METADATA = {
   dashboard: { id: 'dashboard', title: 'Command Center', icon: 'layout-dashboard', color: '#6366f1' },
@@ -58,7 +59,8 @@ export const INITIAL_USER_PROFILE = {
   bootSequenceEnabled: true,
   examModeEnabled: false,
   soundEnabled: true,
-  soundVolume: 0.6
+  soundVolume: 0.6,
+  attendanceThreshold: 75
 };
 
 export const INITIAL_APPEARANCE = {
@@ -87,10 +89,10 @@ export const INITIAL_TIMETABLE = [
 ];
 
 export const INITIAL_ATTENDANCE = [
-  { id: 'att-1', subject: "CS 229: Machine Learning", totalClasses: 24, attended: 22, minimumRequired: 75 },
-  { id: 'att-2', subject: "CS 161: Design & Analysis of Algorithms", totalClasses: 22, attended: 20, minimumRequired: 75 },
-  { id: 'att-3', subject: "EE 108: Digital Systems Architecture", totalClasses: 20, attended: 16, minimumRequired: 75 },
-  { id: 'att-4', subject: "MATH 104: Linear Algebra", totalClasses: 18, attended: 17, minimumRequired: 75 }
+  { id: 'att-1', subject: "CS 229: Machine Learning", totalClasses: 24, attended: 22, minimumRequired: 75, lectureLogs: [] },
+  { id: 'att-2', subject: "CS 161: Design & Analysis of Algorithms", totalClasses: 22, attended: 20, minimumRequired: 75, lectureLogs: [] },
+  { id: 'att-3', subject: "EE 108: Digital Systems Architecture", totalClasses: 20, attended: 16, minimumRequired: 75, lectureLogs: [] },
+  { id: 'att-4', subject: "MATH 104: Linear Algebra", totalClasses: 18, attended: 17, minimumRequired: 75, lectureLogs: [] }
 ];
 
 export const INITIAL_ASSIGNMENTS = [
@@ -105,12 +107,113 @@ export const INITIAL_EXAMS = [
   { id: 'ex-3', subject: "MATH 104: Linear Algebra", title: "Midterm Exam", examDate: "2026-12-15T09:00:00", syllabus: "Vector Spaces, Orthogonality, Gram-Schmidt, Eigenvalues, SVD Decomposition", preparationPercent: 40, priority: "medium" }
 ];
 
+export const INITIAL_SYLLABUS = [
+  { id: 'syl-1', subject: "CS 229: Machine Learning", topic: "Supervised Learning & Linear Regression", completed: true, notes: "Covered normal equations." },
+  { id: 'syl-2', subject: "CS 229: Machine Learning", topic: "Logistic Regression & Newton-Raphson", completed: true, notes: "Log-likelihood gradient derived." },
+  { id: 'syl-3', subject: "CS 229: Machine Learning", topic: "Support Vector Machines & Kernels", completed: false, notes: "Need to review slack variables." },
+  { id: 'syl-4', subject: "CS 161: Algorithms", topic: "Divide and Conquer & Master Method", completed: true, notes: "Proof verified." },
+  { id: 'syl-5', subject: "CS 161: Algorithms", topic: "Dynamic Programming Memoization", completed: true, notes: "Solved knapsack." }
+];
+
+export const INITIAL_GRADES = [
+  { id: 'gr-1', semester: "Semester 1", courseName: "CS 106B: Programming Abstractions", credits: 4, grade: "A", gradePoints: 4.0 },
+  { id: 'gr-2', semester: "Semester 1", courseName: "MATH 51: Linear Algebra & Differential Calculus", credits: 5, grade: "A", gradePoints: 4.0 },
+  { id: 'gr-3', semester: "Semester 1", courseName: "PHYSICS 41: Mechanics", credits: 4, grade: "A-", gradePoints: 3.7 },
+  { id: 'gr-4', semester: "Semester 2", courseName: "CS 107: Computer Organization & Systems", credits: 5, grade: "A", gradePoints: 4.0 },
+  { id: 'gr-5', semester: "Semester 2", courseName: "CS 109: Probability for Computer Scientists", credits: 4, grade: "A", gradePoints: 4.0 }
+];
+
 export const INITIAL_HABITS = [
-  { id: 'h-1', name: "Morning Deep Work (90 Min)", icon: "sparkles", category: "Academic", type: "duration", target: 90, unit: "mins", xp: 40, frequency: "daily", color: "#6366f1", currentStreak: 12, longestStreak: 21, active: true, completedDates: [new Date().toISOString().split('T')[0]] },
-  { id: 'h-2', name: "Solve 1 LeetCode Problem", icon: "code", category: "Skills", type: "number", target: 1, unit: "problem", xp: 35, frequency: "daily", color: "#06b6d4", currentStreak: 9, longestStreak: 15, active: true, completedDates: [new Date().toISOString().split('T')[0]] },
-  { id: 'h-3', name: "Gym / Resistance Training", icon: "dumbbell", category: "Fitness", type: "checkbox", target: 1, unit: "session", xp: 45, frequency: "weekdays", color: "#10b981", currentStreak: 4, longestStreak: 14, active: true, completedDates: [] },
-  { id: 'h-4', name: "Drink 3.5L Water", icon: "droplets", category: "Health", type: "number", target: 3.5, unit: "L", xp: 25, frequency: "daily", color: "#38bdf8", currentStreak: 12, longestStreak: 25, active: true, completedDates: [new Date().toISOString().split('T')[0]] },
-  { id: 'h-5', name: "Nightly Review & Journaling", icon: "book-open", category: "Personal", type: "checkbox", target: 1, unit: "entry", xp: 30, frequency: "daily", color: "#a855f7", currentStreak: 7, longestStreak: 18, active: true, completedDates: [] }
+  {
+    id: 'h-1',
+    name: "Morning Deep Work (90 Min)",
+    icon: "sparkles",
+    category: "Academic",
+    type: "duration",
+    target: 90,
+    unit: "mins",
+    xp: 40,
+    frequency: "daily",
+    color: "#6366f1",
+    currentStreak: 12,
+    longestStreak: 21,
+    active: true,
+    completedLogs: { [new Date().toISOString().split('T')[0]]: 90 },
+    skippedDates: [],
+    notes: "Non-negotiable morning cognitive block."
+  },
+  {
+    id: 'h-2',
+    name: "Solve 1 LeetCode Problem",
+    icon: "code",
+    category: "Skills",
+    type: "number",
+    target: 1,
+    unit: "problem",
+    xp: 35,
+    frequency: "daily",
+    color: "#06b6d4",
+    currentStreak: 9,
+    longestStreak: 15,
+    active: true,
+    completedLogs: { [new Date().toISOString().split('T')[0]]: 1 },
+    skippedDates: [],
+    notes: "Focus on mediums & clean space complexity."
+  },
+  {
+    id: 'h-3',
+    name: "Gym / Resistance Training",
+    icon: "dumbbell",
+    category: "Fitness",
+    type: "checkbox",
+    target: 1,
+    unit: "session",
+    xp: 45,
+    frequency: "weekdays",
+    color: "#10b981",
+    currentStreak: 4,
+    longestStreak: 14,
+    active: true,
+    completedLogs: {},
+    skippedDates: [],
+    notes: "Push/Pull/Legs rotation."
+  },
+  {
+    id: 'h-4',
+    name: "Drink 3.5L Water",
+    icon: "droplets",
+    category: "Health",
+    type: "number",
+    target: 3.5,
+    unit: "L",
+    xp: 25,
+    frequency: "daily",
+    color: "#38bdf8",
+    currentStreak: 12,
+    longestStreak: 25,
+    active: true,
+    completedLogs: { [new Date().toISOString().split('T')[0]]: 3.5 },
+    skippedDates: [],
+    notes: "Electrolytes in the morning."
+  },
+  {
+    id: 'h-5',
+    name: "Nightly Review & Journaling",
+    icon: "book-open",
+    category: "Personal",
+    type: "checkbox",
+    target: 1,
+    unit: "entry",
+    xp: 30,
+    frequency: "daily",
+    color: "#a855f7",
+    currentStreak: 7,
+    longestStreak: 18,
+    active: true,
+    completedLogs: {},
+    skippedDates: [],
+    notes: "Reflect on wins and plan tomorrow's top 3."
+  }
 ];
 
 export const INITIAL_GOALS = [
@@ -128,6 +231,11 @@ export const INITIAL_GOALS = [
     unit: "projects",
     xpReward: 500,
     color: "#6366f1",
+    progressLogs: [
+      { date: "2026-09-20", value: 1, note: "Completed MLP from scratch in NumPy" },
+      { date: "2026-10-15", value: 2, note: "Built ResNet CNN for CIFAR-10" },
+      { date: "2026-11-10", value: 3, note: "Finished RNN/LSTM text generator" }
+    ],
     milestones: [
       { id: 'm-1-1', title: "Mathematical Foundations & Matrix Calculus", completed: true },
       { id: 'm-1-2', title: "Build CNN & Vision Classifier", completed: true },
@@ -148,6 +256,11 @@ export const INITIAL_GOALS = [
     unit: "problems",
     xpReward: 750,
     color: "#ec4899",
+    progressLogs: [
+      { date: "2026-09-30", value: 25, note: "Arrays, Two Pointers, Sliding Window" },
+      { date: "2026-10-31", value: 48, note: "Linked Lists, Trees, Binary Search" },
+      { date: "2026-11-18", value: 64, note: "Heaps and Graph BFS/DFS" }
+    ],
     milestones: [
       { id: 'm-2-1', title: "Resume & Portfolio Refresh", completed: true },
       { id: 'm-2-2', title: "NeetCode 150 Data Structures Grind", completed: false }
@@ -156,10 +269,10 @@ export const INITIAL_GOALS = [
 ];
 
 export const INITIAL_KANBAN = [
-  { id: 'kc-1', title: "Finalize Midterm Study Guide", column: "In Progress", priority: "high", deadline: "2026-12-05", labels: ["Exams", "CS 229"] },
-  { id: 'kc-2', title: "Submit Palantir Referral Form", column: "Done", priority: "high", deadline: "2026-11-20", labels: ["Career"] },
-  { id: 'kc-3', title: "Draft Future Me 2027 Letter", column: "Done", priority: "medium", deadline: "2026-11-15", labels: ["Mindset"] },
-  { id: 'kc-4', title: "Review Graph Algorithms with TA", column: "To Do", priority: "medium", deadline: "2026-11-28", labels: ["CS 161"] }
+  { id: 'kc-1', title: "Finalize Midterm Study Guide", column: "In Progress", priority: "high", deadline: "2026-12-05", labels: ["Exams", "CS 229"], subtasks: [{ id: 'st-1', text: 'Kernels summary', completed: true }, { id: 'st-2', text: 'Practice exam 2024', completed: false }] },
+  { id: 'kc-2', title: "Submit Palantir Referral Form", column: "Done", priority: "high", deadline: "2026-11-20", labels: ["Career"], subtasks: [{ id: 'st-3', text: 'Update PDF resume', completed: true }] },
+  { id: 'kc-3', title: "Draft Future Me 2027 Letter", column: "Done", priority: "medium", deadline: "2026-11-15", labels: ["Mindset"], subtasks: [] },
+  { id: 'kc-4', title: "Review Graph Algorithms with TA", column: "To Do", priority: "medium", deadline: "2026-11-28", labels: ["CS 161"], subtasks: [{ id: 'st-4', text: 'List top 5 questions', completed: false }] }
 ];
 
 export const INITIAL_NOTES = [
@@ -184,8 +297,8 @@ export const INITIAL_NOTES = [
 ];
 
 export const INITIAL_FLASHCARDS = [
-  { id: 'fc-1', deck: "CS 229 Machine Learning", front: "Generative vs. Discriminative models?", back: "Discriminative learns P(Y|X) directly (Logistic Regression, SVM). Generative learns P(X|Y) and P(Y) (Naive Bayes, GDA).", difficulty: "medium" },
-  { id: 'fc-2', deck: "Algorithms", front: "Master Theorem recurrence T(n) = aT(n/b) + f(n)?", back: "Compare f(n) with n^(log_b a) across 3 cases: polynomial smaller, matching, polynomial larger.", difficulty: "hard" }
+  { id: 'fc-1', deck: "CS 229 Machine Learning", front: "Generative vs. Discriminative models?", back: "Discriminative learns P(Y|X) directly (Logistic Regression, SVM). Generative learns P(X|Y) and P(Y) (Naive Bayes, GDA).", difficulty: "medium", repetitions: 3, interval: 6, easeFactor: 2.5, nextReview: "2026-11-20" },
+  { id: 'fc-2', deck: "Algorithms", front: "Master Theorem recurrence T(n) = aT(n/b) + f(n)?", back: "Compare f(n) with n^(log_b a) across 3 cases: polynomial smaller, matching, polynomial larger.", difficulty: "hard", repetitions: 1, interval: 1, easeFactor: 2.2, nextReview: "2026-11-19" }
 ];
 
 export const INITIAL_EXPENSES = [
@@ -214,8 +327,8 @@ export const INITIAL_SKILLS = [
 ];
 
 export const INITIAL_PROJECTS = [
-  { id: 'prj-1', name: "College OS", description: "Futuristic personal operating system for ambitious college students.", technology: "Vanilla ES Modules, CSS Tokens, Web Audio", status: "Completed", progress: 100 },
-  { id: 'prj-2', name: "Autonomous Drone Path Planner", description: "Real-time 3D collision avoidance using voxel grids.", technology: "C++, ROS2, OpenCV", status: "In Progress", progress: 65 }
+  { id: 'prj-1', name: "College OS", description: "Futuristic personal operating system for ambitious college students.", technology: "Vanilla ES Modules, CSS Tokens, Web Audio", status: "Completed", progress: 100, githubUrl: "https://github.com/ishanjain13/college-os-1" },
+  { id: 'prj-2', name: "Autonomous Drone Path Planner", description: "Real-time 3D collision avoidance using voxel grids.", technology: "C++, ROS2, OpenCV", status: "In Progress", progress: 65, githubUrl: "" }
 ];
 
 export const INITIAL_INTERNSHIPS = [
@@ -224,8 +337,8 @@ export const INITIAL_INTERNSHIPS = [
 ];
 
 export const INITIAL_CODING = [
-  { id: 'cp-1', platform: "LeetCode", problem: "Course Schedule II", difficulty: "Medium", topic: "Topological Sort", date: "2026-11-18", solved: true },
-  { id: 'cp-2', platform: "LeetCode", problem: "Coin Change", difficulty: "Medium", topic: "Dynamic Programming", date: "2026-11-17", solved: true }
+  { id: 'cp-1', platform: "LeetCode", problem: "Course Schedule II", difficulty: "Medium", topic: "Topological Sort", date: "2026-11-18", solved: true, url: "https://leetcode.com/problems/course-schedule-ii" },
+  { id: 'cp-2', platform: "LeetCode", problem: "Coin Change", difficulty: "Medium", topic: "Dynamic Programming", date: "2026-11-17", solved: true, url: "https://leetcode.com/problems/coin-change" }
 ];
 
 export const INITIAL_WEEKLY_BOSS = {
@@ -273,13 +386,180 @@ export const INITIAL_JOURNAL = [
 ];
 
 export const INITIAL_FITNESS_LOGS = [
-  { date: "2026-11-18", weight: 74.2, steps: 10450, workout: "Upper Body Hypertrophy", volume: 6400, protein: 165, sleep: 7.8, water: 3.5 },
-  { date: "2026-11-17", weight: 74.4, steps: 9200, workout: "Legs & Core", volume: 7200, protein: 155, sleep: 7.2, water: 3.2 }
+  { id: 'fit-1', date: "2026-11-18", weight: 74.2, steps: 10450, workout: "Upper Body Hypertrophy", volume: 6400, protein: 165, sleep: 7.8, water: 3.5 },
+  { id: 'fit-2', date: "2026-11-17", weight: 74.4, steps: 9200, workout: "Legs & Core", volume: 7200, protein: 155, sleep: 7.2, water: 3.2 }
 ];
+
+export const INITIAL_WELLBEING_LOGS = [
+  { id: 'wb-1', date: "2026-11-18", moodScore: 5, moodLabel: "Focused & High Agency", energyLevel: 85, stressLevel: 25, breathingMinutes: 10, notes: "Felt very calm and clear after morning box breathing." },
+  { id: 'wb-2', date: "2026-11-17", moodScore: 4, moodLabel: "Good Momentum", energyLevel: 80, stressLevel: 35, breathingMinutes: 5, notes: "Solid day, balanced workload." }
+];
+
+export const INITIAL_CAMPUS = {
+  chores: [
+    { id: 'chr-1', title: 'Clean Kitchen & Countertops', assignedTo: 'Alex', frequency: 'Weekly', completed: true, dueDate: '2026-11-20' },
+    { id: 'chr-2', title: 'Trash & Recycling Disposal', assignedTo: 'Roommate Dave', frequency: 'Weekly', completed: false, dueDate: '2026-11-21' },
+    { id: 'chr-3', title: 'Restock Shared Groceries & Soap', assignedTo: 'Alex', frequency: 'Biweekly', completed: false, dueDate: '2026-11-25' }
+  ],
+  events: [
+    { id: 'ev-1', title: 'Fall Career Fair: Tech & Robotics', location: 'Campus Recreation Center', date: '2026-11-26T10:00:00', category: 'Career', attending: true },
+    { id: 'ev-2', title: 'AI Research Reading Group', location: 'Gates Computer Science 300', date: '2026-11-27T16:30:00', category: 'Academic', attending: true }
+  ],
+  contacts: [
+    { id: 'con-1', name: 'Prof. Andrew', role: 'Faculty / CS 229 Instructor', email: 'andrew@cs.univ.edu', office: 'Gates 340', hours: 'Mon 14:00 - 16:00' },
+    { id: 'con-2', name: 'Dr. Tarjan', role: 'Algorithms Professor', email: 'tarjan@cs.univ.edu', office: 'Gates 280', hours: 'Wed 13:00 - 15:00' }
+  ]
+};
+
+export const INITIAL_ACTIVITY_LOG = [
+  { id: 'act-1', timestamp: new Date(Date.now() - 3600000 * 2).toISOString(), appId: 'habits', action: 'completed', title: 'Completed Habit: Morning Deep Work', details: '90 minutes logged', xpEarned: 40 },
+  { id: 'act-2', timestamp: new Date(Date.now() - 3600000 * 4).toISOString(), appId: 'focus', action: 'completed_session', title: 'Completed 25-min Pomodoro', details: 'Subject: CS 229: Machine Learning', xpEarned: 50 },
+  { id: 'act-3', timestamp: new Date(Date.now() - 3600000 * 8).toISOString(), appId: 'academics', action: 'updated', title: 'Updated Assignment Progress', details: 'Problem Set 2 reached 60%', xpEarned: 25 }
+];
+
+export const INITIAL_AI_SETTINGS = {
+  apiKey: '',
+  model: 'gemini-1.5-flash',
+  enabled: false
+};
+
+/**
+ * Migration helper to migrate schema v1 or unversioned data to Schema v2
+ */
+export function migrateState(raw) {
+  if (!raw || typeof raw !== 'object') return null;
+
+  // Upgrade habits format
+  let upgradedHabits = Array.isArray(raw.habits) ? raw.habits.map(h => {
+    const completedLogs = h.completedLogs || {};
+    if (Array.isArray(h.completedDates)) {
+      h.completedDates.forEach(d => {
+        if (!completedLogs[d]) completedLogs[d] = h.target || 1;
+      });
+    }
+    return {
+      id: h.id || 'h-' + Math.random().toString(36).substr(2, 6),
+      name: h.name || 'Untitled Habit',
+      icon: h.icon || 'check-circle',
+      category: h.category || 'General',
+      type: h.type || 'checkbox',
+      target: Number(h.target) || 1,
+      unit: h.unit || 'times',
+      xp: Number(h.xp) || 30,
+      frequency: h.frequency || 'daily',
+      color: h.color || '#6366f1',
+      currentStreak: Number(h.currentStreak) || 0,
+      longestStreak: Number(h.longestStreak) || 0,
+      active: h.active !== false,
+      completedLogs,
+      skippedDates: Array.isArray(h.skippedDates) ? h.skippedDates : [],
+      notes: h.notes || ''
+    };
+  }) : INITIAL_HABITS;
+
+  // Upgrade goals format
+  let upgradedGoals = Array.isArray(raw.goals) ? raw.goals.map(g => {
+    return {
+      id: g.id || 'g-' + Math.random().toString(36).substr(2, 6),
+      name: g.name || 'Untitled Goal',
+      description: g.description || '',
+      category: g.category || 'Personal',
+      priority: g.priority || 'medium',
+      startDate: g.startDate || new Date().toISOString().split('T')[0],
+      deadline: g.deadline || '',
+      status: g.status || 'Active',
+      currentValue: Number(g.currentValue) || 0,
+      targetValue: Number(g.targetValue) || 100,
+      unit: g.unit || '%',
+      xpReward: Number(g.xpReward) || 500,
+      color: g.color || '#6366f1',
+      progressLogs: Array.isArray(g.progressLogs) ? g.progressLogs : [
+        { date: new Date().toISOString().split('T')[0], value: Number(g.currentValue) || 0, note: 'Initial milestone' }
+      ],
+      milestones: Array.isArray(g.milestones) ? g.milestones : []
+    };
+  }) : INITIAL_GOALS;
+
+  // Upgrade kanban cards
+  let upgradedKanban = Array.isArray(raw.kanbanCards) ? raw.kanbanCards.map(c => ({
+    id: c.id || 'kc-' + Math.random().toString(36).substr(2, 6),
+    title: c.title || 'Untitled Card',
+    column: c.column || 'To Do',
+    priority: c.priority || 'medium',
+    deadline: c.deadline || '',
+    labels: Array.isArray(c.labels) ? c.labels : [],
+    subtasks: Array.isArray(c.subtasks) ? c.subtasks : []
+  })) : INITIAL_KANBAN;
+
+  // Upgrade attendance records
+  let upgradedAttendance = Array.isArray(raw.attendance) ? raw.attendance.map(a => ({
+    id: a.id || 'att-' + Math.random().toString(36).substr(2, 6),
+    subject: a.subject || 'Class',
+    totalClasses: Number(a.totalClasses) || 0,
+    attended: Number(a.attended) || 0,
+    minimumRequired: Number(a.minimumRequired) || 75,
+    lectureLogs: Array.isArray(a.lectureLogs) ? a.lectureLogs : []
+  })) : INITIAL_ATTENDANCE;
+
+  // Upgrade flashcards
+  let upgradedFlashcards = Array.isArray(raw.flashcards) ? raw.flashcards.map(fc => ({
+    id: fc.id || 'fc-' + Math.random().toString(36).substr(2, 6),
+    deck: fc.deck || 'General',
+    front: fc.front || '',
+    back: fc.back || '',
+    difficulty: fc.difficulty || 'medium',
+    repetitions: Number(fc.repetitions) || 0,
+    interval: Number(fc.interval) || 1,
+    easeFactor: Number(fc.easeFactor) || 2.5,
+    nextReview: fc.nextReview || new Date().toISOString().split('T')[0]
+  })) : INITIAL_FLASHCARDS;
+
+  return {
+    schemaVersion: CURRENT_SCHEMA_VERSION,
+    profile: { ...INITIAL_USER_PROFILE, ...raw.profile },
+    appearance: { ...INITIAL_APPEARANCE, ...raw.appearance },
+    timetable: Array.isArray(raw.timetable) ? raw.timetable : INITIAL_TIMETABLE,
+    attendance: upgradedAttendance,
+    assignments: Array.isArray(raw.assignments) ? raw.assignments : INITIAL_ASSIGNMENTS,
+    exams: Array.isArray(raw.exams) ? raw.exams : INITIAL_EXAMS,
+    syllabus: Array.isArray(raw.syllabus) ? raw.syllabus : INITIAL_SYLLABUS,
+    grades: Array.isArray(raw.grades) ? raw.grades : INITIAL_GRADES,
+    habits: upgradedHabits,
+    goals: upgradedGoals,
+    kanbanCards: upgradedKanban,
+    notes: Array.isArray(raw.notes) ? raw.notes : INITIAL_NOTES,
+    flashcards: upgradedFlashcards,
+    expenses: Array.isArray(raw.expenses) ? raw.expenses : INITIAL_EXPENSES,
+    budgets: raw.budgets && typeof raw.budgets === 'object' ? { ...INITIAL_BUDGETS, ...raw.budgets } : INITIAL_BUDGETS,
+    skills: Array.isArray(raw.skills) ? raw.skills : INITIAL_SKILLS,
+    projects: Array.isArray(raw.projects) ? raw.projects : INITIAL_PROJECTS,
+    internships: Array.isArray(raw.internships) ? raw.internships : INITIAL_INTERNSHIPS,
+    codingPractice: Array.isArray(raw.codingPractice) ? raw.codingPractice : INITIAL_CODING,
+    weeklyBoss: raw.weeklyBoss && typeof raw.weeklyBoss === 'object' ? { ...INITIAL_WEEKLY_BOSS, ...raw.weeklyBoss } : INITIAL_WEEKLY_BOSS,
+    rewards: Array.isArray(raw.rewards) ? raw.rewards : INITIAL_REWARD_SHOP,
+    futureLetters: Array.isArray(raw.futureLetters) ? raw.futureLetters : INITIAL_FUTURE_LETTERS,
+    visionItems: Array.isArray(raw.visionItems) ? raw.visionItems : INITIAL_VISION_ITEMS,
+    journal: Array.isArray(raw.journal) ? raw.journal : INITIAL_JOURNAL,
+    fitnessLogs: Array.isArray(raw.fitnessLogs) ? raw.fitnessLogs : INITIAL_FITNESS_LOGS,
+    wellbeingLogs: Array.isArray(raw.wellbeingLogs) ? raw.wellbeingLogs : INITIAL_WELLBEING_LOGS,
+    campus: raw.campus && typeof raw.campus === 'object' ? {
+      chores: Array.isArray(raw.campus.chores) ? raw.campus.chores : INITIAL_CAMPUS.chores,
+      events: Array.isArray(raw.campus.events) ? raw.campus.events : INITIAL_CAMPUS.events,
+      contacts: Array.isArray(raw.campus.contacts) ? raw.campus.contacts : INITIAL_CAMPUS.contacts
+    } : INITIAL_CAMPUS,
+    activityLog: Array.isArray(raw.activityLog) ? raw.activityLog : INITIAL_ACTIVITY_LOG,
+    activeFocusTimer: raw.activeFocusTimer || null,
+    aiChatHistory: Array.isArray(raw.aiChatHistory) ? raw.aiChatHistory : [],
+    aiSettings: raw.aiSettings && typeof raw.aiSettings === 'object' ? { ...INITIAL_AI_SETTINGS, ...raw.aiSettings } : INITIAL_AI_SETTINGS,
+    achievements: Array.isArray(raw.achievements) ? raw.achievements : DEFAULT_ACHIEVEMENTS,
+    levelTiers: Array.isArray(raw.levelTiers) ? raw.levelTiers : DEFAULT_LEVEL_TIERS
+  };
+}
 
 class StateStore {
   constructor() {
     this.listeners = new Set();
+    this.sliceListeners = new Map();
     this.state = this.loadState();
   }
 
@@ -288,68 +568,54 @@ class StateStore {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
         const parsed = JSON.parse(raw);
-        return {
-          profile: { ...INITIAL_USER_PROFILE, ...parsed.profile },
-          appearance: { ...INITIAL_APPEARANCE, ...parsed.appearance },
-          timetable: parsed.timetable || INITIAL_TIMETABLE,
-          attendance: parsed.attendance || INITIAL_ATTENDANCE,
-          assignments: parsed.assignments || INITIAL_ASSIGNMENTS,
-          exams: parsed.exams || INITIAL_EXAMS,
-          habits: parsed.habits || INITIAL_HABITS,
-          goals: parsed.goals || INITIAL_GOALS,
-          kanbanCards: parsed.kanbanCards || INITIAL_KANBAN,
-          notes: parsed.notes || INITIAL_NOTES,
-          flashcards: parsed.flashcards || INITIAL_FLASHCARDS,
-          expenses: parsed.expenses || INITIAL_EXPENSES,
-          budgets: parsed.budgets || INITIAL_BUDGETS,
-          skills: parsed.skills || INITIAL_SKILLS,
-          projects: parsed.projects || INITIAL_PROJECTS,
-          internships: parsed.internships || INITIAL_INTERNSHIPS,
-          codingPractice: parsed.codingPractice || INITIAL_CODING,
-          weeklyBoss: parsed.weeklyBoss || INITIAL_WEEKLY_BOSS,
-          rewards: parsed.rewards || INITIAL_REWARD_SHOP,
-          futureLetters: parsed.futureLetters || INITIAL_FUTURE_LETTERS,
-          visionItems: parsed.visionItems || INITIAL_VISION_ITEMS,
-          journal: parsed.journal || INITIAL_JOURNAL,
-          fitnessLogs: parsed.fitnessLogs || INITIAL_FITNESS_LOGS,
-          achievements: parsed.achievements || DEFAULT_ACHIEVEMENTS,
-          levelTiers: parsed.levelTiers || DEFAULT_LEVEL_TIERS
-        };
+        return migrateState(parsed) || this.getDefaultState();
       }
     } catch (e) {
-      console.warn("Failed loading storage:", e);
+      console.warn("Failed loading state from storage, loading defaults:", e);
     }
+    return this.getDefaultState();
+  }
 
+  getDefaultState() {
     return {
-      profile: INITIAL_USER_PROFILE,
-      appearance: INITIAL_APPEARANCE,
-      timetable: INITIAL_TIMETABLE,
-      attendance: INITIAL_ATTENDANCE,
-      assignments: INITIAL_ASSIGNMENTS,
-      exams: INITIAL_EXAMS,
-      habits: INITIAL_HABITS,
-      goals: INITIAL_GOALS,
-      kanbanCards: INITIAL_KANBAN,
-      notes: INITIAL_NOTES,
-      flashcards: INITIAL_FLASHCARDS,
-      expenses: INITIAL_EXPENSES,
-      budgets: INITIAL_BUDGETS,
-      skills: INITIAL_SKILLS,
-      projects: INITIAL_PROJECTS,
-      internships: INITIAL_INTERNSHIPS,
-      codingPractice: INITIAL_CODING,
-      weeklyBoss: INITIAL_WEEKLY_BOSS,
-      rewards: INITIAL_REWARD_SHOP,
-      futureLetters: INITIAL_FUTURE_LETTERS,
-      visionItems: INITIAL_VISION_ITEMS,
-      journal: INITIAL_JOURNAL,
-      fitnessLogs: INITIAL_FITNESS_LOGS,
-      achievements: DEFAULT_ACHIEVEMENTS,
-      levelTiers: DEFAULT_LEVEL_TIERS
+      schemaVersion: CURRENT_SCHEMA_VERSION,
+      profile: { ...INITIAL_USER_PROFILE },
+      appearance: { ...INITIAL_APPEARANCE },
+      timetable: [...INITIAL_TIMETABLE],
+      attendance: [...INITIAL_ATTENDANCE],
+      assignments: [...INITIAL_ASSIGNMENTS],
+      exams: [...INITIAL_EXAMS],
+      syllabus: [...INITIAL_SYLLABUS],
+      grades: [...INITIAL_GRADES],
+      habits: [...INITIAL_HABITS],
+      goals: [...INITIAL_GOALS],
+      kanbanCards: [...INITIAL_KANBAN],
+      notes: [...INITIAL_NOTES],
+      flashcards: [...INITIAL_FLASHCARDS],
+      expenses: [...INITIAL_EXPENSES],
+      budgets: { ...INITIAL_BUDGETS },
+      skills: [...INITIAL_SKILLS],
+      projects: [...INITIAL_PROJECTS],
+      internships: [...INITIAL_INTERNSHIPS],
+      codingPractice: [...INITIAL_CODING],
+      weeklyBoss: { ...INITIAL_WEEKLY_BOSS },
+      rewards: [...INITIAL_REWARD_SHOP],
+      futureLetters: [...INITIAL_FUTURE_LETTERS],
+      visionItems: [...INITIAL_VISION_ITEMS],
+      journal: [...INITIAL_JOURNAL],
+      fitnessLogs: [...INITIAL_FITNESS_LOGS],
+      wellbeingLogs: [...INITIAL_WELLBEING_LOGS],
+      campus: { ...INITIAL_CAMPUS },
+      activityLog: [...INITIAL_ACTIVITY_LOG],
+      activeFocusTimer: null,
+      aiChatHistory: [],
+      aiSettings: { ...INITIAL_AI_SETTINGS },
+      achievements: [...DEFAULT_ACHIEVEMENTS],
+      levelTiers: [...DEFAULT_LEVEL_TIERS]
     };
   }
 
-  save(immediate = false) {
+  save(immediate = false, modifiedSlice = null) {
     if (this._saveTimer) {
       clearTimeout(this._saveTimer);
       this._saveTimer = null;
@@ -363,7 +629,7 @@ class StateStore {
       }
     };
 
-    this.notify(); // Immediately update all UI listeners for 60fps responsiveness
+    this.notify(modifiedSlice);
 
     if (immediate) {
       doSave();
@@ -377,9 +643,31 @@ class StateStore {
     return () => this.listeners.delete(fn);
   }
 
-  notify() {
+  subscribeSlice(sliceKey, fn) {
+    if (!this.sliceListeners.has(sliceKey)) {
+      this.sliceListeners.set(sliceKey, new Set());
+    }
+    this.sliceListeners.get(sliceKey).add(fn);
+    return () => this.sliceListeners.get(sliceKey)?.delete(fn);
+  }
+
+  notify(modifiedSlice = null) {
     for (const fn of this.listeners) {
-      fn(this.state);
+      try {
+        fn(this.state, modifiedSlice);
+      } catch (err) {
+        console.error("Error in state subscriber:", err);
+      }
+    }
+
+    if (modifiedSlice && this.sliceListeners.has(modifiedSlice)) {
+      for (const fn of this.sliceListeners.get(modifiedSlice)) {
+        try {
+          fn(this.state[modifiedSlice], this.state);
+        } catch (err) {
+          console.error(`Error in slice subscriber (${modifiedSlice}):`, err);
+        }
+      }
     }
   }
 
@@ -387,63 +675,213 @@ class StateStore {
     return this.state;
   }
 
+  setSlice(sliceKey, updater, immediate = false) {
+    if (typeof updater === 'function') {
+      this.state[sliceKey] = updater(this.state[sliceKey]);
+    } else {
+      this.state[sliceKey] = updater;
+    }
+    this.save(immediate, sliceKey);
+  }
+
   updateProfile(updates) {
     this.state.profile = { ...this.state.profile, ...updates };
-    this.save();
+    this.save(false, 'profile');
   }
 
   updateAppearance(updates) {
     this.state.appearance = { ...this.state.appearance, ...updates };
-    this.save();
+    this.save(false, 'appearance');
   }
 
   setHabits(updater) {
-    this.state.habits = typeof updater === 'function' ? updater(this.state.habits) : updater;
-    this.save();
+    this.setSlice('habits', updater);
   }
 
   setGoals(updater) {
-    this.state.goals = typeof updater === 'function' ? updater(this.state.goals) : updater;
-    this.save();
+    this.setSlice('goals', updater);
   }
 
   setAssignments(updater) {
-    this.state.assignments = typeof updater === 'function' ? updater(this.state.assignments) : updater;
-    this.save();
+    this.setSlice('assignments', updater);
+  }
+
+  setExams(updater) {
+    this.setSlice('exams', updater);
+  }
+
+  setSyllabus(updater) {
+    this.setSlice('syllabus', updater);
+  }
+
+  setGrades(updater) {
+    this.setSlice('grades', updater);
   }
 
   setKanbanCards(updater) {
-    this.state.kanbanCards = typeof updater === 'function' ? updater(this.state.kanbanCards) : updater;
-    this.save();
+    this.setSlice('kanbanCards', updater);
   }
 
   setNotes(updater) {
-    this.state.notes = typeof updater === 'function' ? updater(this.state.notes) : updater;
-    this.save();
+    this.setSlice('notes', updater);
+  }
+
+  setFlashcards(updater) {
+    this.setSlice('flashcards', updater);
   }
 
   setExpenses(updater) {
-    this.state.expenses = typeof updater === 'function' ? updater(this.state.expenses) : updater;
-    this.save();
+    this.setSlice('expenses', updater);
   }
 
-  setJournal(updater) {
-    this.state.journal = typeof updater === 'function' ? updater(this.state.journal) : updater;
-    this.save();
+  setBudgets(updater) {
+    this.setSlice('budgets', updater);
   }
 
-  setFitnessLogs(updater) {
-    this.state.fitnessLogs = typeof updater === 'function' ? updater(this.state.fitnessLogs) : updater;
-    this.save();
+  setSkills(updater) {
+    this.setSlice('skills', updater);
+  }
+
+  setProjects(updater) {
+    this.setSlice('projects', updater);
+  }
+
+  setInternships(updater) {
+    this.setSlice('internships', updater);
+  }
+
+  setCodingPractice(updater) {
+    this.setSlice('codingPractice', updater);
   }
 
   setWeeklyBoss(updater) {
-    this.state.weeklyBoss = typeof updater === 'function' ? updater(this.state.weeklyBoss) : updater;
-    this.save();
+    this.setSlice('weeklyBoss', updater);
+  }
+
+  setRewards(updater) {
+    this.setSlice('rewards', updater);
+  }
+
+  setJournal(updater) {
+    this.setSlice('journal', updater);
+  }
+
+  setFitnessLogs(updater) {
+    this.setSlice('fitnessLogs', updater);
+  }
+
+  setWellbeingLogs(updater) {
+    this.setSlice('wellbeingLogs', updater);
+  }
+
+  setCampus(updater) {
+    this.setSlice('campus', updater);
+  }
+
+  setTimetable(updater) {
+    this.setSlice('timetable', updater);
+  }
+
+  setAttendance(updater) {
+    this.setSlice('attendance', updater);
+  }
+
+  setVisionItems(updater) {
+    this.setSlice('visionItems', updater);
+  }
+
+  setFutureLetters(updater) {
+    this.setSlice('futureLetters', updater);
+  }
+
+  setActiveFocusTimer(timer) {
+    this.state.activeFocusTimer = timer;
+    this.save(true, 'activeFocusTimer');
+  }
+
+  setAiChatHistory(updater) {
+    this.setSlice('aiChatHistory', updater);
+  }
+
+  setAiSettings(updates) {
+    this.state.aiSettings = { ...this.state.aiSettings, ...updates };
+    this.save(true, 'aiSettings');
+  }
+
+  addActivityLog(entry) {
+    if (!entry) return;
+    const item = {
+      id: entry.id || 'act-' + Date.now() + '-' + Math.random().toString(36).substr(2, 4),
+      timestamp: entry.timestamp || new Date().toISOString(),
+      appId: entry.appId || 'system',
+      action: entry.action || 'action',
+      title: entry.title || 'Activity',
+      details: entry.details || '',
+      xpEarned: Number(entry.xpEarned) || 0,
+      metadata: entry.metadata || {}
+    };
+
+    if (!Array.isArray(this.state.activityLog)) {
+      this.state.activityLog = [];
+    }
+
+    // Keep up to 500 recent entries to avoid unbounded growth
+    this.state.activityLog = [item, ...this.state.activityLog].slice(0, 500);
+    this.save(false, 'activityLog');
+  }
+
+  /**
+   * Clears out all mock/demo records so user starts with a clean slate,
+   * while keeping user profile, appearance, settings, and XP progression intact.
+   */
+  clearDemoData() {
+    this.state.timetable = [];
+    this.state.attendance = [];
+    this.state.assignments = [];
+    this.state.exams = [];
+    this.state.syllabus = [];
+    this.state.grades = [];
+    this.state.habits = [];
+    this.state.goals = [];
+    this.state.kanbanCards = [];
+    this.state.notes = [];
+    this.state.flashcards = [];
+    this.state.expenses = [];
+    this.state.skills = [];
+    this.state.projects = [];
+    this.state.internships = [];
+    this.state.codingPractice = [];
+    this.state.journal = [];
+    this.state.fitnessLogs = [];
+    this.state.wellbeingLogs = [];
+    this.state.campus = { chores: [], events: [], contacts: [] };
+    this.state.futureLetters = [];
+    this.state.visionItems = [];
+    this.state.activityLog = [];
+    this.state.activeFocusTimer = null;
+    this.state.aiChatHistory = [];
+    this.save(true);
+    return true;
+  }
+
+  /**
+   * Hard reset to initial default state
+   */
+  resetToFactory() {
+    localStorage.removeItem(STORAGE_KEY);
+    this.state = this.getDefaultState();
+    this.save(true);
+    return true;
   }
 
   exportBackup() {
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(this.state, null, 2));
+    // Clone state and strip out private API keys before saving to disk
+    const exportable = JSON.parse(JSON.stringify(this.state));
+    if (exportable.aiSettings) {
+      exportable.aiSettings.apiKey = ''; // Never leak API keys in backup files
+    }
+
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportable, null, 2));
     const dlAnchorElem = document.createElement('a');
     dlAnchorElem.setAttribute("href", dataStr);
     dlAnchorElem.setAttribute("download", `college_os_backup_${new Date().toISOString().split('T')[0]}.json`);
@@ -454,9 +892,16 @@ class StateStore {
     try {
       const parsed = JSON.parse(jsonString);
       if (parsed && typeof parsed === 'object') {
-        this.state = { ...this.state, ...parsed };
-        this.save();
-        return true;
+        const migrated = migrateState(parsed);
+        if (migrated) {
+          // Preserve local API key if exists and backup didn't provide one
+          if (this.state.aiSettings?.apiKey && !migrated.aiSettings?.apiKey) {
+            migrated.aiSettings.apiKey = this.state.aiSettings.apiKey;
+          }
+          this.state = migrated;
+          this.save(true);
+          return true;
+        }
       }
     } catch (e) {
       console.error("Invalid backup file:", e);
