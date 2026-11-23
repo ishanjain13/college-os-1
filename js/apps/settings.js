@@ -1,11 +1,13 @@
 // COLLEGE OS - App: Settings, Themes, Audio & Data Backup/Restore
 
-import store from '../state.js';
+import store, { STORAGE_KEY } from '../state.js';
 import { awardXP } from '../xpSystem.js';
 import { getIcon } from '../icons.js';
 import { escapeHtml } from '../utils.js';
 import { THEMES, ACCENTS, applyTheme, applyAccent } from '../theme.js';
 import soundService from '../sound.js';
+import ui from '../ui.js';
+import { logActivity } from '../activity.js';
 
 export const settingsApp = {
   id: 'settings',
@@ -26,6 +28,13 @@ export const settingsApp = {
       { id: 'matrix', label: 'Matrix Code' },
       { id: 'minimal_gradient', label: 'Minimal Slate' }
     ];
+
+    // Compute storage metrics
+    let storageSizeKb = '0.0';
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY) || '';
+      storageSizeKb = (new Blob([raw]).size / 1024).toFixed(1);
+    } catch (e) {}
 
     return `
       <div class="app-container">
@@ -115,9 +124,15 @@ export const settingsApp = {
                 <label class="form-label">Degree Course</label>
                 <input type="text" id="prof-course" class="form-input" value="${escapeHtml(state.profile.course || '')}" />
               </div>
-              <div class="form-group">
-                <label class="form-label">Academic Year</label>
-                <input type="text" id="prof-year" class="form-input" value="${escapeHtml(state.profile.year || 'Sophomore (Year 2)')}" />
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Academic Year</label>
+                  <input type="text" id="prof-year" class="form-input" value="${escapeHtml(state.profile.year || 'Sophomore (Year 2)')}" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Min. Attendance Goal (%)</label>
+                  <input type="number" id="prof-attendance-thresh" class="form-input" min="50" max="100" value="${state.profile.attendanceThreshold || 75}" />
+                </div>
               </div>
               <div style="display: flex; gap: var(--space-2); margin-top: var(--space-4);">
                 <button class="btn btn-primary btn-sm" id="btn-save-profile">
@@ -145,7 +160,34 @@ export const settingsApp = {
             </div>
           ` : `
             <!-- Data & Backup -->
-            <div style="display: flex; flex-direction: column; gap: var(--space-4); max-width: 580px;">
+            <div style="display: flex; flex-direction: column; gap: var(--space-4); max-width: 620px;">
+              <!-- Storage Metrics -->
+              <div class="card">
+                <div class="card-header">
+                  <span class="card-title">Storage &amp; Data Metrics</span>
+                  <span class="badge badge-primary">Schema v${state.schemaVersion || 2}</span>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: var(--space-3); margin-bottom: var(--space-3);">
+                  <div style="background: var(--os-bg-subtle); padding: var(--space-3); border-radius: var(--radius-md); border: 1px solid var(--os-border);">
+                    <div style="font-size: 0.6875rem; color: var(--os-text-muted);">Storage Used</div>
+                    <div style="font-size: 1.125rem; font-weight: 700; font-family: var(--font-mono); color: var(--os-accent);">${storageSizeKb} KB</div>
+                  </div>
+                  <div style="background: var(--os-bg-subtle); padding: var(--space-3); border-radius: var(--radius-md); border: 1px solid var(--os-border);">
+                    <div style="font-size: 0.6875rem; color: var(--os-text-muted);">Habits &amp; Goals</div>
+                    <div style="font-size: 1.125rem; font-weight: 700; font-family: var(--font-mono);">${(state.habits?.length || 0)} / ${(state.goals?.length || 0)}</div>
+                  </div>
+                  <div style="background: var(--os-bg-subtle); padding: var(--space-3); border-radius: var(--radius-md); border: 1px solid var(--os-border);">
+                    <div style="font-size: 0.6875rem; color: var(--os-text-muted);">Tasks &amp; Notes</div>
+                    <div style="font-size: 1.125rem; font-weight: 700; font-family: var(--font-mono);">${(state.kanbanCards?.length || 0)} / ${(state.notes?.length || 0)}</div>
+                  </div>
+                  <div style="background: var(--os-bg-subtle); padding: var(--space-3); border-radius: var(--radius-md); border: 1px solid var(--os-border);">
+                    <div style="font-size: 0.6875rem; color: var(--os-text-muted);">Activity Logs</div>
+                    <div style="font-size: 1.125rem; font-weight: 700; font-family: var(--font-mono);">${state.activityLog?.length || 0}</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Backup & Restore -->
               <div class="card">
                 <div class="card-header">
                   <span class="card-title">Data Backup (JSON Export / Import)</span>
@@ -153,7 +195,7 @@ export const settingsApp = {
                 <p style="font-size: 0.8125rem; color: var(--os-text-muted); margin-bottom: var(--space-4);">
                   Export a portable JSON backup file of all 18 applications, habits, assignments, and notes to store locally or restore anytime.
                 </p>
-                <div style="display: flex; gap: var(--space-3);">
+                <div style="display: flex; gap: var(--space-3); flex-wrap: wrap;">
                   <button class="btn btn-primary btn-sm" id="btn-export-backup">
                     ${getIcon('download', 'w-3.5 h-3.5')} Export Backup (JSON)
                   </button>
@@ -161,6 +203,24 @@ export const settingsApp = {
                     ${getIcon('upload', 'w-3.5 h-3.5')} Import Backup
                     <input type="file" id="input-import-backup" accept=".json" style="display: none;" />
                   </label>
+                </div>
+              </div>
+
+              <!-- Danger Zone: Clean Slate & Reset -->
+              <div class="card" style="border-color: rgba(239, 68, 68, 0.3);">
+                <div class="card-header">
+                  <span class="card-title" style="color: var(--os-error);">Danger Zone</span>
+                </div>
+                <p style="font-size: 0.8125rem; color: var(--os-text-muted); margin-bottom: var(--space-4);">
+                  Manage demo data or reset College OS back to initial defaults.
+                </p>
+                <div style="display: flex; gap: var(--space-3); flex-wrap: wrap;">
+                  <button class="btn btn-danger btn-sm" id="btn-clear-demo">
+                    ${getIcon('trash-2', 'w-3.5 h-3.5')} Clear Demo Data (Fresh Slate)
+                  </button>
+                  <button class="btn btn-secondary btn-sm" id="btn-reset-factory" style="color: var(--os-error); border-color: rgba(239, 68, 68, 0.4);">
+                    ${getIcon('rotate-ccw', 'w-3.5 h-3.5')} Reset to Factory Defaults
+                  </button>
                 </div>
               </div>
             </div>
@@ -221,9 +281,17 @@ export const settingsApp = {
       const college = container.querySelector('#prof-college')?.value;
       const course = container.querySelector('#prof-course')?.value;
       const year = container.querySelector('#prof-year')?.value;
-      store.updateProfile({ name, college, course, year });
+      const thresh = Number(container.querySelector('#prof-attendance-thresh')?.value) || 75;
+
+      store.updateProfile({ name, college, course, year, attendanceThreshold: thresh });
+      logActivity({
+        appId: 'settings',
+        action: 'profile_updated',
+        title: 'Updated Student Profile',
+        details: `${name} (${college})`
+      });
       soundService.playComplete();
-      alert("Profile updated successfully!");
+      ui.toast({ title: 'Profile Updated', message: 'Your student profile has been saved successfully.', type: 'success' });
     });
 
     const relaunchBtn = container.querySelector('#btn-relaunch-onboarding');
@@ -248,6 +316,7 @@ export const settingsApp = {
     exportBtn?.addEventListener('click', () => {
       soundService.playClick();
       store.exportBackup();
+      ui.toast({ title: 'Backup Exported', message: 'JSON backup downloaded to your computer.', type: 'success' });
     });
 
     // Import backup
@@ -265,14 +334,50 @@ export const settingsApp = {
             if (newState.appearance?.theme) applyTheme(newState.appearance.theme);
             if (newState.appearance?.accentColor) applyAccent(newState.appearance.accentColor);
             soundService.playLevelUp();
-            alert("✓ Backup successfully restored! All 18 apps synced.");
-            window.location.reload();
+            ui.toast({ title: 'Backup Restored', message: 'All 18 apps synced successfully. Refreshing...', type: 'success' });
+            setTimeout(() => window.location.reload(), 1200);
           } else {
-            alert("Failed to restore backup: Invalid file format.");
+            ui.toast({ title: 'Restore Failed', message: 'The uploaded file is not a valid College OS backup.', type: 'error' });
           }
         }
       };
       reader.readAsText(file);
+    });
+
+    // Clear Demo Data
+    const clearDemoBtn = container.querySelector('#btn-clear-demo');
+    clearDemoBtn?.addEventListener('click', () => {
+      soundService.playClick();
+      ui.confirm({
+        title: 'Clear All Demo Data?',
+        message: 'This will wipe all sample habits, goals, timetable classes, notes, and activity logs so you can enter your own real college information. Your profile, themes, and XP level will NOT be deleted.',
+        confirmText: 'Clear Demo Data',
+        confirmClass: 'btn-danger',
+        onConfirm: () => {
+          store.clearDemoData();
+          soundService.playComplete();
+          ui.toast({ title: 'Demo Data Cleared', message: 'College OS is now a blank canvas ready for your real data.', type: 'success' });
+          container.innerHTML = this.render();
+          this.init(container);
+        }
+      });
+    });
+
+    // Reset to Factory Defaults
+    const resetFactoryBtn = container.querySelector('#btn-reset-factory');
+    resetFactoryBtn?.addEventListener('click', () => {
+      soundService.playClick();
+      ui.confirm({
+        title: 'Reset to Factory Defaults?',
+        message: 'This will erase all saved college data, habits, settings, and profile information, restoring College OS back to its original factory state.',
+        confirmText: 'Reset Everything',
+        confirmClass: 'btn-danger',
+        onConfirm: () => {
+          store.resetToFactory();
+          ui.toast({ title: 'Factory Reset Complete', message: 'Reloading College OS...', type: 'info' });
+          setTimeout(() => window.location.reload(), 1000);
+        }
+      });
     });
   },
 
