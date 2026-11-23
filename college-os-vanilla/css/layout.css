@@ -586,3 +586,226 @@
     display: none !important;
   }
 }
+
+/* ==========================================================================
+   DESKTOP APP SHORTCUTS GRID
+   ========================================================================== */
+.desktop-shortcuts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
+  gap: var(--space-4);
+  padding: var(--space-1) 0 var(--space-4) 0;
+}
+
+.desktop-shortcut-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1-5);
+  padding: var(--space-2);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  text-align: center;
+  user-select: none;
+  -webkit-user-select: none;
+  transition: all var(--duration-fast) var(--ease-spring);
+  border: 1px solid transparent;
+}
+
+.desktop-shortcut-item:hover,
+.desktop-shortcut-item:focus-visible {
+  background: var(--os-bg-subtle);
+  border-color: var(--os-border);
+  transform: translateY(-2px);
+}
+
+.desktop-shortcut-item:active {
+  transform: scale(0.96);
+}
+
+.desktop-shortcut-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-2);
+  transition: transform var(--duration-fast);
+}
+
+.desktop-shortcut-item:hover .desktop-shortcut-icon {
+  transform: scale(1.06);
+  box-shadow: var(--shadow-3);
+}
+
+.desktop-shortcut-label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--os-text);
+  line-height: 1.25;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+  max-width: 80px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+/* ==========================================================================
+   DESKTOP RIGHT-CLICK CONTEXT MENU
+   ========================================================================== */
+.desktop-context-menu {
+  position: fixed;
+  z-index: 1050;
+  background: var(--os-bg-modal);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--os-border-light);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-4);
+  padding: var(--space-1-5);
+  min-width: 220px;
+  display: none;
+  user-select: none;
+  -webkit-user-select: none;
+  animation: contextFadeIn 0.12s ease-out;
+}
+
+.desktop-context-menu.open {
+  display: block;
+}
+
+@keyframes contextFadeIn {
+  from { opacity: 0; transform: scale(0.96) translateY(-4px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.context-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2-5);
+  padding: 7px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--os-text);
+  cursor: pointer;
+  position: relative;
+  transition: background var(--duration-fast);
+}
+
+.context-item:hover {
+  background: var(--os-bg-hover);
+  color: var(--os-text);
+}
+
+.context-icon {
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--os-accent);
+  flex-shrink: 0;
+}
+
+.context-label {
+  flex: 1;
+}
+
+.context-kbd {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  color: var(--os-text-subtle);
+  background: var(--os-bg-subtle);
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+.context-arrow {
+  font-size: 0.875rem;
+  color: var(--os-text-subtle);
+  margin-left: auto;
+}
+
+.context-divider {
+  height: 1px;
+  background: var(--os-border);
+  margin: var(--space-1) 0;
+}
+
+.context-has-submenu {
+  position: relative;
+}
+
+.context-submenu {
+  position: absolute;
+  left: 100%;
+  top: -4px;
+  margin-left: 4px;
+  background: var(--os-bg-modal);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--os-border-light);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-4);
+  padding: var(--space-1-5);
+  min-width: 170px;
+  display: none;
+}
+
+.context-has-submenu:hover > .context-submenu {
+  display: block;
+}
+
+.accent-bullet {
+  width: 10px;
+  height: 10px;
+  border-radius: var(--radius-full);
+  display: inline-block;
+  margin-right: 6px;
+}
+
+/* ==========================================================================
+   ONBOARDING MODAL STYLING
+   ========================================================================== */
+.onboarding-card {
+  max-width: 520px;
+  width: 100%;
+  background: linear-gradient(180deg, rgba(99, 102, 241, 0.14) 0%, var(--os-bg-modal) 55%);
+  border: 1px solid var(--os-border-light);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-5);
+  overflow: hidden;
+}
+
+.onboarding-badge-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-md);
+  background: var(--os-accent);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 16px var(--os-accent-glow);
+}
+
+.onboarding-progress-bar {
+  width: 100%;
+  height: 4px;
+  background: var(--os-bg-subtle);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  margin-top: var(--space-3);
+}
+
+.onboarding-progress-fill {
+  height: 100%;
+  background: var(--os-accent);
+  transition: width var(--duration-normal) var(--ease-standard);
+}
+

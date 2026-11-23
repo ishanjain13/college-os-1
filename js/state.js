@@ -54,7 +54,7 @@ export const INITIAL_USER_PROFILE = {
   longestStreak: 21,
   totalXP: 3420,
   joinedDate: "2026-09-01",
-  onboardingCompleted: true,
+  onboardingCompleted: false,
   bootSequenceEnabled: true,
   examModeEnabled: false,
   soundEnabled: true,
@@ -349,13 +349,27 @@ class StateStore {
     };
   }
 
-  save() {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(this.state));
-    } catch (e) {
-      console.error("Storage save error:", e);
+  save(immediate = false) {
+    if (this._saveTimer) {
+      clearTimeout(this._saveTimer);
+      this._saveTimer = null;
     }
-    this.notify();
+
+    const doSave = () => {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(this.state));
+      } catch (e) {
+        console.error("Storage save error:", e);
+      }
+    };
+
+    this.notify(); // Immediately update all UI listeners for 60fps responsiveness
+
+    if (immediate) {
+      doSave();
+    } else {
+      this._saveTimer = setTimeout(doSave, 120);
+    }
   }
 
   subscribe(fn) {
