@@ -111,20 +111,20 @@ export const habitsApp = {
         <!-- Habit List -->
         <div class="app-body">
           ${habits.length === 0 ? ui.emptyState({
-            icon: 'check-circle',
-            title: this.showArchived ? 'No archived habits' : 'No habit protocols active',
-            description: this.showArchived ? 'Active habits you archive will be kept here.' : 'Add your first daily habit to start building positive feedback loops and earning XP.',
-            actionText: this.showArchived ? '' : 'Create First Habit Protocol',
-            actionId: 'btn-empty-add-habit'
-          }) : `
+      icon: 'check-circle',
+      title: this.showArchived ? 'No archived habits' : 'No habit protocols active',
+      description: this.showArchived ? 'Active habits you archive will be kept here.' : 'Add your first daily habit to start building positive feedback loops and earning XP.',
+      actionText: this.showArchived ? '' : 'Create First Habit Protocol',
+      actionId: 'btn-empty-add-habit'
+    }) : `
             <div style="display: flex; flex-direction: column; gap: var(--space-3);">
               ${habits.map(h => {
-                const currentVal = h.completedLogs?.[todayStr] || 0;
-                const target = h.target || 1;
-                const isDone = currentVal >= target;
-                const isSkipped = h.skippedDates?.includes(todayStr);
+      const currentVal = h.completedLogs?.[todayStr] || 0;
+      const target = h.target || 1;
+      const isDone = currentVal >= target;
+      const isSkipped = h.skippedDates?.includes(todayStr);
 
-                return `
+      return `
                   <div class="card" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--space-4); border-left: 3px solid ${h.color || 'var(--os-accent)'};">
                     <div style="display: flex; align-items: center; gap: var(--space-3); min-width: 240px; flex: 1;">
                       <button class="habit-check-btn ${isDone ? 'checked' : ''}" data-toggle-habit="${h.id}" title="${isDone ? 'Mark Incomplete' : 'Complete Habit'}" style="flex-shrink: 0;">
@@ -151,12 +151,12 @@ export const habitsApp = {
                     <div style="display: flex; align-items: center; gap: var(--space-4); flex-wrap: wrap;">
                       <div style="display: flex; gap: 4px;" title="Last 7 days completion history">
                         ${past7Days.map(d => {
-                          const done = (h.completedLogs?.[d] || 0) >= target;
-                          const frozen = h.skippedDates?.includes(d);
-                          return `
+        const done = (h.completedLogs?.[d] || 0) >= target;
+        const frozen = h.skippedDates?.includes(d);
+        return `
                             <div style="width: 11px; height: 11px; border-radius: var(--radius-full); background: ${frozen ? 'var(--os-warning)' : done ? 'var(--os-success)' : 'rgba(255,255,255,0.1)'};" title="${d}: ${frozen ? 'Streak Freeze' : done ? 'Completed' : 'Missed'}"></div>
                           `;
-                        }).join('')}
+      }).join('')}
                       </div>
 
                       <div style="text-align: right; min-width: 65px;">
@@ -185,7 +185,7 @@ export const habitsApp = {
                     </div>
                   </div>
                 `;
-              }).join('')}
+    }).join('')}
             </div>
           `}
         </div>
@@ -250,7 +250,7 @@ export const habitsApp = {
               newLogs[todayStr] = target;
               const newStreak = (h.currentStreak || 0) + 1;
               const newLongest = Math.max(h.longestStreak || 0, newStreak);
-              
+
               logActivity({
                 appId: 'habits',
                 action: 'completed',
@@ -542,7 +542,7 @@ export const habitsApp = {
     });
   },
 
-  destroy() {}
+  destroy() { }
 };
 
 export default habitsApp;
