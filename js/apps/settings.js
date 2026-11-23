@@ -244,10 +244,12 @@ export const settingsApp = {
         if (content && typeof content === 'string') {
           const success = store.importBackup(content);
           if (success) {
+            const newState = store.get();
+            if (newState.appearance?.theme) applyTheme(newState.appearance.theme);
+            if (newState.appearance?.accentColor) applyAccent(newState.appearance.accentColor);
             soundService.playLevelUp();
             alert("✓ Backup successfully restored! All 18 apps synced.");
-            container.innerHTML = this.render();
-            this.init(container);
+            window.location.reload();
           } else {
             alert("Failed to restore backup: Invalid file format.");
           }
