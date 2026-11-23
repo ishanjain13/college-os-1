@@ -9,6 +9,7 @@ import { calculateLevelInfo, awardXP } from './xpSystem.js';
 import { triggerConfetti } from './confetti.js';
 import { getIcon } from './icons.js';
 import { escapeHtml, getDaysLeft, addRipple } from './utils.js';
+import { logActivity } from './activity.js';
 
 // Import all 18 apps
 import dashboardApp from './apps/dashboard.js';
@@ -218,6 +219,11 @@ function initWallpaperEngine() {
           ctx.fill();
         }
       }
+    }
+
+    if (typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      // Respect prefers-reduced-motion: render single static wallpaper frame
+      return;
     }
     requestAnimationFrame(render);
   }
@@ -916,6 +922,7 @@ function initDesktopWidgets() {
     ]);
 
     awardXP(20, `Captured task: ${title}`);
+    logActivity({ appId: 'planner', action: 'created', title: 'Captured Quick Task', details: title, xpEarned: 20 });
     quickInput.value = '';
     renderWidgets();
   });
@@ -1037,6 +1044,7 @@ function initQuickCapture() {
         ...prev
       ]);
       awardXP(20, `Task captured: ${title}`);
+      logActivity({ appId: 'planner', action: 'created', title: 'Captured Quick Task', details: title, xpEarned: 20 });
     } else if (captureType === 'habit') {
       store.setHabits(prev => [
         {
@@ -1056,6 +1064,7 @@ function initQuickCapture() {
         ...prev
       ]);
       awardXP(30, `Habit captured: ${title}`);
+      logActivity({ appId: 'habits', action: 'created', title: 'Captured Habit', details: title, xpEarned: 30 });
     } else if (captureType === 'note') {
       store.setNotes(prev => [
         {
@@ -1070,6 +1079,7 @@ function initQuickCapture() {
         ...prev
       ]);
       awardXP(20, `Note captured: ${title}`);
+      logActivity({ appId: 'notes', action: 'created', title: 'Captured Quick Note', details: title, xpEarned: 20 });
     }
 
     titleInput.value = '';

@@ -54,6 +54,9 @@ export const settingsApp = {
             <button class="tab-btn ${currentTab === 'sound' ? 'active' : ''}" data-settings-tab="sound">
               ${getIcon('volume-2', 'w-3.5 h-3.5')} Audio
             </button>
+            <button class="tab-btn ${currentTab === 'ai' ? 'active' : ''}" data-settings-tab="ai">
+              ${getIcon('bot', 'w-3.5 h-3.5')} AI Copilot
+            </button>
             <button class="tab-btn ${currentTab === 'data' ? 'active' : ''}" data-settings-tab="data">
               ${getIcon('download', 'w-3.5 h-3.5')} Backup &amp; Data
             </button>
@@ -156,6 +159,42 @@ export const settingsApp = {
                 <button class="btn ${state.profile.soundEnabled ? 'btn-primary' : 'btn-secondary'} btn-xs" id="btn-toggle-sound">
                   ${state.profile.soundEnabled ? 'Enabled' : 'Muted'}
                 </button>
+              </div>
+            </div>
+          ` : currentTab === 'ai' ? `
+            <div class="card" style="max-width: 580px;">
+              <div class="card-header">
+                <span class="card-title">Google Gemini AI Integration</span>
+                <span class="badge ${state.aiSettings?.apiKey ? 'badge-success' : 'badge-secondary'}">
+                  ${state.aiSettings?.apiKey ? 'Configured' : 'Offline / Local'}
+                </span>
+              </div>
+              <p style="font-size: 0.8125rem; color: var(--os-text-muted); line-height: 1.5; margin-bottom: var(--space-4);">
+                Connect your personal Google Gemini API key to power live cognitive tutoring, algorithm analysis, and coursework assistance in the AI Study Buddy app.
+              </p>
+              <div class="form-group">
+                <label class="form-label">Gemini API Key</label>
+                <input type="password" id="input-settings-gemini-key" class="form-input" placeholder="AIzaSy..." value="${escapeHtml(state.aiSettings?.apiKey || '')}" autocomplete="off" />
+                <div style="font-size: 0.6875rem; color: var(--os-text-subtle); margin-top: 4px;">
+                  Get your free API key at <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener" style="color: var(--os-accent); text-decoration: underline;">Google AI Studio</a>. Keys are stored strictly on-device in localStorage and excluded from JSON backups.
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Default Model</label>
+                <select id="select-settings-gemini-model" class="form-select">
+                  <option value="gemini-1.5-flash" ${(state.aiSettings?.model || '') === 'gemini-1.5-flash' ? 'selected' : ''}>gemini-1.5-flash (Fast &amp; Responsive, Recommended)</option>
+                  <option value="gemini-1.5-pro" ${(state.aiSettings?.model || '') === 'gemini-1.5-pro' ? 'selected' : ''}>gemini-1.5-pro (Advanced Reasoning &amp; Long-Form Analysis)</option>
+                </select>
+              </div>
+              <div style="display: flex; gap: var(--space-2); margin-top: var(--space-4);">
+                <button class="btn btn-primary btn-sm" id="btn-save-ai-settings">
+                  Save AI Settings
+                </button>
+                ${state.aiSettings?.apiKey ? `
+                  <button class="btn btn-secondary btn-sm" id="btn-clear-ai-key" style="color: var(--os-error);">
+                    Remove Key
+                  </button>
+                ` : ''}
               </div>
             </div>
           ` : `
@@ -307,6 +346,31 @@ export const settingsApp = {
       const current = store.get().profile.soundEnabled;
       store.updateProfile({ soundEnabled: !current });
       soundService.setEnabled(!current);
+      container.innerHTML = this.render();
+      this.init(container);
+    });
+
+    // Save AI settings
+    const saveAiBtn = container.querySelector('#btn-save-ai-settings');
+    saveAiBtn?.addEventListener('click', () => {
+      const key = container.querySelector('#input-settings-gemini-key')?.value.trim() || '';
+      const model = container.querySelector('#select-settings-gemini-model')?.value || 'gemini-1.5-flash';
+      store.setAiSettings({ apiKey: key, model, enabled: Boolean(key) });
+      soundService.playComplete();
+      ui.toast({
+        title: 'AI Settings Saved',
+        message: key ? `Gemini API key updated (${model}).` : 'API key cleared. Running in local coach mode.',
+        type: 'success'
+      });
+      container.innerHTML = this.render();
+      this.init(container);
+    });
+
+    const clearAiKeyBtn = container.querySelector('#btn-clear-ai-key');
+    clearAiKeyBtn?.addEventListener('click', () => {
+      soundService.playClick();
+      store.setAiSettings({ apiKey: '', enabled: false });
+      ui.toast({ title: 'API Key Removed', message: 'Local coach mode active.', type: 'info' });
       container.innerHTML = this.render();
       this.init(container);
     });

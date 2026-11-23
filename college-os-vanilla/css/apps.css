@@ -371,6 +371,84 @@
   border-bottom-left-radius: 4px;
 }
 
+.chat-bubble.assistant pre {
+  background: var(--os-bg-subtle);
+  border: 1px solid var(--os-border);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  overflow-x: auto;
+  margin: var(--space-2) 0;
+}
+
+.chat-bubble.assistant code {
+  font-family: var(--font-mono);
+  background: var(--os-bg-subtle);
+  padding: 1px 4px;
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+}
+
+.chat-bubble.assistant ul, .chat-bubble.assistant ol {
+  margin: var(--space-2) 0;
+  padding-left: var(--space-4);
+}
+
+.chat-bubble.assistant li {
+  margin-bottom: var(--space-1);
+}
+
+.chat-typing-indicator {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: var(--space-2) var(--space-3);
+}
+
+.chat-typing-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--os-accent);
+  animation: typingPulse 1.2s infinite ease-in-out;
+}
+
+.chat-typing-dot:nth-child(2) { animation-delay: 0.2s; }
+.chat-typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes typingPulse {
+  0%, 100% { opacity: 0.3; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.1); }
+}
+
+.context-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  font-size: 0.6875rem;
+  background: var(--os-bg-subtle);
+  border: 1px solid var(--os-border);
+  color: var(--os-text-muted);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.context-pill:hover {
+  border-color: var(--os-border-strong);
+  color: var(--os-text);
+}
+
+.context-pill.active {
+  background: rgba(99, 102, 241, 0.15);
+  border-color: var(--os-accent);
+  color: var(--os-accent);
+  font-weight: 600;
+}
+
 /* ==========================================================================
    SETTINGS THEME PILLS
    ========================================================================== */
