@@ -116,19 +116,32 @@
   --shadow-glow: 0 0 24px var(--os-accent-glow);
 
   /* ==========================================================================
-     MOTION & EASING
+     MOTION & EASING (Material 3 Motion System)
      ========================================================================== */
-  --duration-instant: 75ms;
-  --duration-fast: 150ms;
-  --duration-normal: 240ms;
-  --duration-slow: 380ms;
-  --duration-extra-slow: 600ms;
+  --motion-duration-sm: 150ms;
+  --motion-duration-md: 250ms;
+  --motion-duration-lg: 380ms;
+  --motion-duration-xl: 500ms;
 
-  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
-  --ease-decelerate: cubic-bezier(0, 0, 0.2, 1);
-  --ease-accelerate: cubic-bezier(0.4, 0, 1, 1);
-  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
-  --ease-bounce: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --motion-ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --motion-ease-emphasized: cubic-bezier(0.05, 0.7, 0.1, 1);
+  --motion-ease-decelerate: cubic-bezier(0, 0, 0.2, 1);
+  --motion-ease-accelerate: cubic-bezier(0.4, 0, 1, 1);
+  --motion-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --motion-ease-bounce: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+  /* Legacy aliases for backward compatibility */
+  --duration-instant: 75ms;
+  --duration-fast: var(--motion-duration-sm);
+  --duration-normal: var(--motion-duration-md);
+  --duration-slow: var(--motion-duration-lg);
+  --duration-extra-slow: var(--motion-duration-xl);
+
+  --ease-standard: var(--motion-ease-standard);
+  --ease-decelerate: var(--motion-ease-decelerate);
+  --ease-accelerate: var(--motion-ease-accelerate);
+  --ease-spring: var(--motion-ease-spring);
+  --ease-bounce: var(--motion-ease-bounce);
 
   /* ==========================================================================
      Z-INDEX SYSTEM
@@ -148,7 +161,8 @@
 /* ==========================================================================
    LIGHT MODE OVERRIDES
    ========================================================================== */
-[data-theme="light"], :root.light {
+[data-theme="light"],
+:root.light {
   --os-bg: #f3f5fa;
   --os-bg-card: rgba(255, 255, 255, 0.92);
   --os-bg-card-hover: rgba(255, 255, 255, 1);
@@ -234,12 +248,35 @@
   --os-accent-glow: rgba(245, 158, 11, 0.4);
 }
 
-/* Reduced Motion Override */
+/* Reduced Motion Override (OS preference or User Settings toggle) */
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+[data-reduce-motion="true"] *,
+[data-reduce-motion="true"] *::before,
+[data-reduce-motion="true"] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
+/* Smooth Theme & Accent Switching Transition */
+html.theme-transitioning,
+html.theme-transitioning *,
+html.theme-transitioning *::before,
+html.theme-transitioning *::after {
+  transition: background-color 240ms cubic-bezier(0.2, 0, 0, 1),
+    border-color 240ms cubic-bezier(0.2, 0, 0, 1),
+    color 200ms cubic-bezier(0.2, 0, 0, 1),
+    box-shadow 240ms cubic-bezier(0.2, 0, 0, 1) !important;
 }

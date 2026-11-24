@@ -39,7 +39,22 @@ export function initTheme() {
   }
 }
 
+let transitionTimeout = null;
+function triggerSmoothTransition() {
+  if (typeof document === 'undefined') return;
+  const isReduced = document.documentElement.getAttribute('data-reduce-motion') === 'true' ||
+    (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  if (isReduced) return;
+
+  document.documentElement.classList.add('theme-transitioning');
+  clearTimeout(transitionTimeout);
+  transitionTimeout = setTimeout(() => {
+    document.documentElement.classList.remove('theme-transitioning');
+  }, 260);
+}
+
 export function applyTheme(themeName) {
+  triggerSmoothTransition();
   document.documentElement.setAttribute('data-theme', themeName);
   if (themeName === 'light') {
     document.documentElement.classList.remove('dark');
@@ -53,6 +68,7 @@ export function applyTheme(themeName) {
 }
 
 export function applyAccent(accentName) {
+  triggerSmoothTransition();
   document.documentElement.setAttribute('data-accent', accentName);
   store.updateAppearance({ accentColor: accentName });
 }
